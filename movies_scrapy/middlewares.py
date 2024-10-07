@@ -24,11 +24,11 @@ class RequestLoggingMiddleware:
 
 
 class SaveHtmlMiddleware:
-    def __init__(self, redis_host, redis_port, redis_db, redis_key):
+    def __init__(self, redis_host, redis_port, redis_db, redis_key, save_path):
         self.redis_cli = redis.StrictRedis(
             host=redis_host, port=redis_port, db=redis_db)
         self.redis_key = redis_key
-        self.save_path = '/Users/fengpan/Downloads/saved_html'
+        self.save_path = save_path
 
     @classmethod
     def from_crawler(cls, crawler):
@@ -36,7 +36,8 @@ class SaveHtmlMiddleware:
             redis_host=crawler.settings.get('REDIS_HOST'),
             redis_port=crawler.settings.get('REDIS_PORT'),
             redis_db=crawler.settings.get('REDIS_DB'),
-            redis_key=crawler.settings.get('REDIS_KEY')
+            redis_key=crawler.settings.get('REDIS_KEY'),
+            save_path=crawler.settings.get('HTML_STORE')
         )
 
     def process_request(self, request, spider):

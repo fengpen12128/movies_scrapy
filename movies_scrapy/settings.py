@@ -72,6 +72,7 @@ LOG_LEVEL = 'INFO'
 
 FILES_STORE = '/root/download_data'
 IMAGES_STORE = '/root/download_data'
+HTML_STORE = '/root/saved_html'
 
 DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 
