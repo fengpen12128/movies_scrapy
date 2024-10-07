@@ -9,6 +9,8 @@ from psycopg2 import extras
 from aiohttp_socks import ProxyConnector
 import psycopg2
 from enum import Enum
+import subprocess
+import threading
 
 
 class DownloadStatus(Enum):
@@ -116,6 +118,17 @@ class FileDownloader:
             f'Starting download task with {len(source_data)} records...')
         asyncio.run(self.start_download(source_data))
         self.status = DownloadStatus.COMPLETED
+
+        # Start a new thread to execute the shell command
+        threading.Thread(target=self.execute_shell_command).start()
+
+    def execute_shell_command(self):
+        command = "/mc mv -r /root/download_data/ local/movies"
+        try:
+            subprocess.run(command, shell=True, check=True)
+            logger.info("Shell command executed successfully")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Error executing shell command: {e}")
 
     def get_statistics(self) -> Dict[str, Any]:
         stats = self.stats_tracker.get_statistics()
