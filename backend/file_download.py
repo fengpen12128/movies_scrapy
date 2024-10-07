@@ -106,7 +106,7 @@ class FileDownloader:
 
         with postgre_conn.cursor(cursor_factory=extras.DictCursor) as cursor:
             cursor.execute(
-                "SELECT * FROM download_urls WHERE status = 0 AND type = 1")
+                "SELECT * FROM download_urls WHERE status = 0 AND type !=3 1")
             rows = cursor.fetchall()
 
             # Convert rows to list of dictionaries
