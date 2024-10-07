@@ -78,7 +78,7 @@ async def api_run_spider(request: SpiderRequest):
 async def get_spider_status(task_id: str):
     try:
         project_name = 'movies_scrapy'
-        status = scrapyd.status(project_name, task_id)
+        status = scrapyd.job_status(project_name, task_id)
         return {"task_id": task_id, "status": status}
     except Exception as e:
         logger.error(f"Error occurred while checking status: {str(e)}")
