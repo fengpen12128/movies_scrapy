@@ -21,17 +21,16 @@ RETRY_PRIORITY_ADJUST = -1  # 重试请求的优先级调整值
 
 
 # 设置每个请求之间的延迟（单位：秒）。这可以用来减慢爬虫的速度。
-DOWNLOAD_DELAY = 0.6
+DOWNLOAD_DELAY = 0.5
 # 置为 True 可以在 DOWNLOAD_DELAY 的基础上随机化延迟时间，使得每次请求的延迟时间不同。
 RANDOMIZE_DOWNLOAD_DELAY = True
 # Scrapy 应该达到的目标并发请求数。
-AUTOTHROTTLE_TARGET_CONCURRENCY = 8.0
-#
-#
+AUTOTHROTTLE_TARGET_CONCURRENCY = 10.0
+
 DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,
-    "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
+    # "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
 
 }
 
@@ -40,7 +39,7 @@ ITEM_PIPELINES = {
     # "movies_scrapy.pipelines.MongoPipeline": 1,
     #  "movies_scrapy.pipelines.CustomImageVideoPipeline": 2,
     "movies_scrapy.pipelines.PostgreSQLPipeline": 3,
-    "movies_scrapy.pipelines.DownloadURLsPipeline": 4,
+    # "movies_scrapy.pipelines.DownloadURLsPipeline": 4,
 }
 
 
@@ -72,6 +71,7 @@ LOG_LEVEL = 'INFO'
 
 FILES_STORE = '/root/download_data'
 IMAGES_STORE = '/root/download_data'
+HTML_STORE = '/root/saved_html'
 
 DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 
@@ -79,7 +79,7 @@ DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 POSTGRES_DB = 'postgres'
 POSTGRES_USER = 'postgres'
 POSTGRES_PASSWORD = 'admin123'
-POSTGRES_HOST = '192.168.1.22'
+POSTGRES_HOST = '127.0.0.1'
 POSTGRES_PORT = '5432'
 
 

@@ -30,7 +30,7 @@ class FileDownloader:
 
     def __init__(self):
         self.progress_tracker: DownloadProgressTracker = None
-        self.stats_tracker = DownloadStatisticsTracker()
+        self.stats_tracker: DownloadStatisticsTracker = None
         self.status = DownloadStatus.NOT_STARTED
 
     async def download_image(self, url: str, filename: str, folder: str, semaphore: asyncio.Semaphore, session: aiohttp.ClientSession) -> None:
@@ -93,14 +93,7 @@ class FileDownloader:
             logger.error(f"Failed to connect to PostgreSQL: {e}")
             raise
 
-    def reset(self):
-        self.progress_tracker = None
-        self.stats_tracker = DownloadStatisticsTracker()
-        self.status = DownloadStatus.NOT_STARTED
-        self.total_records = 0
-
     def start(self):
-        self.reset()  # Reset the state before starting a new download
         self.status = DownloadStatus.IN_PROGRESS
         postgre_conn = self.get_postgresql_connection()
 
@@ -109,10 +102,10 @@ class FileDownloader:
                 "SELECT * FROM download_urls WHERE status = 0 AND type !=3 ")
             rows = cursor.fetchall()
 
-            # Convert rows to list of dictionaries
             source_data = [dict(row) for row in rows]
 
         self.progress_tracker = DownloadProgressTracker(len(source_data))
+        self.stats_tracker = DownloadStatisticsTracker(postgre_conn)
         self.total_records = len(source_data)
         logger.info(
             f'Starting download task with {len(source_data)} records...')

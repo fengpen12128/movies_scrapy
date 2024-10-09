@@ -9,6 +9,8 @@ from psycopg2 import extras
 from aiohttp_socks import ProxyConnector
 import psycopg2
 from enum import Enum
+import subprocess
+import threading
 
 
 class DownloadStatus(Enum):
@@ -22,13 +24,13 @@ class FileDownloader:
         "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) "
                       "Chrome/114.0.0.0 Safari/537.36"
     }
-    MAIN_STORAGE_PATH = '/Users/fengpan/Downloads/download_data'
+    MAIN_STORAGE_PATH = '/root/download_data'
     SEMAPHORE_LIMIT = 20
     CHUNK_SIZE = 8192
 
     def __init__(self):
         self.progress_tracker: DownloadProgressTracker = None
-        self.stats_tracker = DownloadStatisticsTracker()
+        self.stats_tracker: DownloadStatisticsTracker = None
         self.status = DownloadStatus.NOT_STARTED
 
     async def download_image(self, url: str, filename: str, folder: str, semaphore: asyncio.Semaphore, session: aiohttp.ClientSession) -> None:
@@ -91,31 +93,35 @@ class FileDownloader:
             logger.error(f"Failed to connect to PostgreSQL: {e}")
             raise
 
-    def reset(self):
-        self.progress_tracker = None
-        self.stats_tracker = DownloadStatisticsTracker()
-        self.status = DownloadStatus.NOT_STARTED
-        self.total_records = 0
-
     def start(self):
-        self.reset()  # Reset the state before starting a new download
         self.status = DownloadStatus.IN_PROGRESS
         postgre_conn = self.get_postgresql_connection()
 
         with postgre_conn.cursor(cursor_factory=extras.DictCursor) as cursor:
             cursor.execute(
-                "SELECT * FROM download_urls WHERE status = 0 AND type = 1")
+                "SELECT * FROM download_urls WHERE status = 0 AND type !=3 ")
             rows = cursor.fetchall()
 
-            # Convert rows to list of dictionaries
             source_data = [dict(row) for row in rows]
 
         self.progress_tracker = DownloadProgressTracker(len(source_data))
+        self.stats_tracker = DownloadStatisticsTracker(postgre_conn)
         self.total_records = len(source_data)
         logger.info(
             f'Starting download task with {len(source_data)} records...')
         asyncio.run(self.start_download(source_data))
         self.status = DownloadStatus.COMPLETED
+
+        # Start a new thread to execute the shell command
+        threading.Thread(target=self.execute_shell_command).start()
+
+    def execute_shell_command(self):
+        command = "/mc mv -r /root/download_data/ local/movies"
+        try:
+            subprocess.run(command, shell=True, check=True)
+            logger.info("Shell command executed successfully")
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Error executing shell command: {e}")
 
     def get_statistics(self) -> Dict[str, Any]:
         stats = self.stats_tracker.get_statistics()

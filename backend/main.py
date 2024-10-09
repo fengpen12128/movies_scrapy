@@ -64,10 +64,8 @@ async def api_run_spider(request: SpiderRequest):
 
         # 返回任务 ID 和 batch_id
         return {
-            "status": "scheduled",
-            "message": "Spider task scheduled",
             "jobId": task_id,
-            "batchId": batch_id
+            "batchId": str(batch_id)
         }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")

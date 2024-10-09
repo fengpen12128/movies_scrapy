@@ -21,13 +21,12 @@ RETRY_PRIORITY_ADJUST = -1  # 重试请求的优先级调整值
 
 
 # 设置每个请求之间的延迟（单位：秒）。这可以用来减慢爬虫的速度。
-DOWNLOAD_DELAY = 0.6
+DOWNLOAD_DELAY = 0.5
 # 置为 True 可以在 DOWNLOAD_DELAY 的基础上随机化延迟时间，使得每次请求的延迟时间不同。
 RANDOMIZE_DOWNLOAD_DELAY = True
 # Scrapy 应该达到的目标并发请求数。
-AUTOTHROTTLE_TARGET_CONCURRENCY = 8.0
-#
-#
+AUTOTHROTTLE_TARGET_CONCURRENCY = 10.0
+
 DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,

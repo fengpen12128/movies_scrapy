@@ -51,29 +51,29 @@ class DownloadProgressTracker:
 
 
 class DownloadStatisticsTracker:
-    def __init__(self):
+    def __init__(self, db_connection):
         self.start_time = time.time()
         self.end_time = None
         self.success_count = 0
         self.failure_count = 0
         self.total_size = 0
-        self.db_connection = self._get_postgresql_connection()
+        self.db_connection = db_connection
 
-    def _get_postgresql_connection(self):
-        try:
-            postgres_config = {
-                'host': '192.168.1.22',
-                'port': 5432,
-                'user': 'postgres',
-                'password': 'admin123',
-                'database': 'postgres'
-            }
-            connection = psycopg2.connect(**postgres_config)
-            logger.info("Connected to PostgreSQL")
-            return connection
-        except psycopg2.Error as e:
-            logger.error(f"Failed to connect to PostgreSQL: {e}")
-            raise
+    # def _get_postgresql_connection(self):
+    #     try:
+    #         postgres_config = {
+    #             'host': '127.0.0.1',
+    #             'port': 5432,
+    #             'user': 'postgres',
+    #             'password': 'admin123',
+    #             'database': 'postgres'
+    #         }
+    #         connection = psycopg2.connect(**postgres_config)
+    #         logger.info("Connected to PostgreSQL")
+    #         return connection
+    #     except psycopg2.Error as e:
+    #         logger.error(f"Failed to connect to PostgreSQL: {e}")
+    #         raise
 
     def record_download(self, url, success, size):
         with self.db_connection.cursor() as cursor:

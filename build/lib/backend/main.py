@@ -64,22 +64,49 @@ async def api_run_spider(request: SpiderRequest):
 
         # 返回任务 ID 和 batch_id
         return {
-            "status": "scheduled",
-            "message": "Spider task scheduled",
             "jobId": task_id,
-            "batchId": batch_id
+            "batchId": str(batch_id)
         }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
+# @app.get("/spider-status/{task_id}")
+# async def get_spider_status(task_id: str):
+#     try:
+#         project_name = 'movies_scrapy'
+#         status = scrapyd.job_status(project_name, task_id)
+#         return {"task_id": task_id, "status": status}
+#     except Exception as e:
+#         logger.error(f"Error occurred while checking status: {str(e)}")
+#         raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.get("/spider-status/{task_id}")
 async def get_spider_status(task_id: str):
     try:
         project_name = 'movies_scrapy'
-        status = scrapyd.job_status(project_name, task_id)
-        return {"task_id": task_id, "status": status}
+        jobs = scrapyd.list_jobs(project_name)
+
+        # 检查运行中的任务
+        for job in jobs['running']:
+            if job['id'] == task_id:
+                return {"task_id": task_id, "status": "running"}
+
+        # 检查待处理的任务
+        for job in jobs['pending']:
+            if job['id'] == task_id:
+                return {"task_id": task_id, "status": "pending"}
+
+        # 检查已完成的任务
+        for job in jobs['finished']:
+            if job['id'] == task_id:
+                return {"task_id": task_id, "status": "finished"}
+
+        # 如果任务未找到
+        return {"task_id": task_id, "status": "not_found"}
+
     except Exception as e:
         logger.error(f"Error occurred while checking status: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))

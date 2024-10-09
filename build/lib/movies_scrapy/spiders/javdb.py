@@ -139,7 +139,7 @@ class JavdbSpider(scrapy.Spider):
             '//div[@class="item"]/a[@class="box"]/@href').getall()
         for uri in detail_urls:
             count = self.redis_cli.hget(self.redis_key, uri)
-            if count is None or int(count) <= 10:
+            if count is None or int(count) <= 400:
                 full_url = response.urljoin(uri)
                 yield scrapy.Request(url=full_url, callback=self.parse_detail, meta={'is_detail_url': True})
             else:
