@@ -1,3 +1,7 @@
 actor_img/
 nohup.out
 *.log
+dbs/
+eggs/
+items/
+
