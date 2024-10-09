@@ -25,7 +25,7 @@ class FileDownloader:
                       "Chrome/114.0.0.0 Safari/537.36"
     }
     MAIN_STORAGE_PATH = '/root/download_data'
-    SEMAPHORE_LIMIT = 20
+    SEMAPHORE_LIMIT = 30
     CHUNK_SIZE = 8192
 
     def __init__(self):
