@@ -148,7 +148,7 @@ file_downloader = FileDownloader()
 @app.post("/start-download-sync")
 def start_download_sync():
     try:
-        file_downloader.reset()  # Reset the state before starting
+        file_downloader = FileDownloader()
         file_downloader.start()
         return {"status": "completed", "message": "Download process completed"}
     except Exception as e:
@@ -159,7 +159,7 @@ def start_download_sync():
 @app.post("/start-download-async")
 async def start_download_async(background_tasks: BackgroundTasks):
     try:
-        file_downloader.reset()  # Reset the state before starting
+        file_downloader = FileDownloader()  # Reset the state before starting
         background_tasks.add_task(file_downloader.start)
         return {"status": "started", "message": "Download process started asynchronously"}
     except Exception as e:
