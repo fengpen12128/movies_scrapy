@@ -10,6 +10,7 @@ from fastapi.responses import PlainTextResponse
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 import sys
 import os
+import requests
 
 # 获取当前文件的目录
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -35,7 +36,7 @@ scrapyd = ScrapydAPI('http://localhost:6800')
 
 
 class SpiderRequest(BaseModel):
-    urls: list[tuple[str, int]]
+    urls: list[dict]
 
 
 @app.post("/run-spider")
@@ -72,17 +73,6 @@ async def api_run_spider(request: SpiderRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# @app.get("/spider-status/{task_id}")
-# async def get_spider_status(task_id: str):
-#     try:
-#         project_name = 'movies_scrapy'
-#         status = scrapyd.job_status(project_name, task_id)
-#         return {"task_id": task_id, "status": status}
-#     except Exception as e:
-#         logger.error(f"Error occurred while checking status: {str(e)}")
-#         raise HTTPException(status_code=500, detail=str(e))
-
-
 @app.get("/spider-status/{task_id}")
 async def get_spider_status(task_id: str):
     try:
@@ -117,19 +107,13 @@ async def get_spider_log(task_id: str):
     try:
         project_name = 'movies_scrapy'
         spider_name = 'javdb'
+        log_url = f"http://localhost:6800/logs/{project_name}/{spider_name}/{task_id}.log"
 
-        # 使用相对路径
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(current_dir)
-        log_path = os.path.join(project_root, 'logs',
-                                project_name, spider_name, f"{task_id}.log")
-
-        if not os.path.exists(log_path):
+        response = requests.get(log_url)
+        if response.status_code == 404:
             raise HTTPException(status_code=404, detail="Log file not found")
 
-        with open(log_path, 'r') as log_file:
-            log_content = log_file.read()
-
+        log_content = response.text
         return log_content
     except Exception as e:
         logger.error(f"Error occurred while fetching log: {str(e)}")

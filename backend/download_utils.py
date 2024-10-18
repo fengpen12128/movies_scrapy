@@ -2,7 +2,6 @@ import time
 import json
 from datetime import datetime
 import threading
-from loguru import logger
 
 from tqdm import tqdm
 import psycopg2

@@ -2,7 +2,6 @@ import asyncio
 import os
 from typing import List, Dict, Any
 import aiohttp
-from loguru import logger
 import aiofiles
 from download_utils import DownloadProgressTracker, DownloadStatisticsTracker
 from psycopg2 import extras
@@ -53,7 +52,7 @@ class FileDownloader:
                 self.progress_tracker.update(1, 0)
                 self.stats_tracker.record_download(url, True, size)
             except Exception as e:
-                logger.error(
+                self.logger.error(
                     f"Download failed {url} to {folder}/{filename}: {e}")
                 self.progress_tracker.update(1, 0)
                 self.stats_tracker.record_download(url, False, 0)
@@ -74,8 +73,7 @@ class FileDownloader:
         self.stats_tracker.finish()
         self.stats_tracker.print_statistics()
 
-    @staticmethod
-    def get_postgresql_connection():
+    def get_postgresql_connection(self):
         try:
             postgres_config = {
                 'host': '192.168.1.22',
@@ -86,11 +84,11 @@ class FileDownloader:
             }
 
             connection = psycopg2.connect(**postgres_config)
-            logger.info("Connected to PostgreSQL")
+            self.logger.info("Connected to PostgreSQL")
 
             return connection
         except psycopg2.Error as e:
-            logger.error(f"Failed to connect to PostgreSQL: {e}")
+            self.logger.error(f"Failed to connect to PostgreSQL: {e}")
             raise
 
     def start(self):
@@ -107,7 +105,7 @@ class FileDownloader:
         self.progress_tracker = DownloadProgressTracker(len(source_data))
         self.stats_tracker = DownloadStatisticsTracker(postgre_conn)
         self.total_records = len(source_data)
-        logger.info(
+        self.logger.info(
             f'Starting download task with {len(source_data)} records...')
         asyncio.run(self.start_download(source_data))
         self.status = DownloadStatus.COMPLETED
@@ -119,9 +117,9 @@ class FileDownloader:
         command = "/mc mv -r /root/download_data/ local/movies"
         try:
             subprocess.run(command, shell=True, check=True)
-            logger.info("Shell command executed successfully")
+            self.logger.info("Shell command executed successfully")
         except subprocess.CalledProcessError as e:
-            logger.error(f"Error executing shell command: {e}")
+            self.logger.error(f"Error executing shell command: {e}")
 
     def get_statistics(self) -> Dict[str, Any]:
         stats = self.stats_tracker.get_statistics()

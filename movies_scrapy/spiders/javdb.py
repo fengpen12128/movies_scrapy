@@ -1,9 +1,7 @@
 import scrapy
 from scrapy import signals
 import redis
-from loguru import logger
 from ..javdbparse_sp import javdb_parser
-import subprocess
 import os
 import time
 from ..config import scheduled_urls
@@ -21,12 +19,16 @@ class JavdbSpider(scrapy.Spider):
         super(JavdbSpider, self).__init__(*args, **kwargs)
         self.mode = kwargs.get('mode', 'scheduled')
         self.batch_id = kwargs.get('batch_id', str(int(time.time())))
-        self.crawl_params = kwargs  # Store all parameters
+        self.crawl_params = kwargs
+        self.logger.info(kwargs)  # Store all parameters
         if self.mode == 'temp':
-            urls_json = kwargs.get('urls', '[]')
-            urls_list = json.loads(urls_json)
-            self.start_urls = [url for url, _ in urls_list]
-            self.max_pages = dict(urls_list)
+            urls_list = kwargs.get('urls', '')
+            urls_list = json.loads(urls_list)
+            self.start_urls = [url_info['url'] for url_info in urls_list]
+            self.max_pages = {
+                url_info['url']: url_info['maxPage'] for url_info in urls_list}
+            self.save_flags = {url_info['url']: url_info.get(
+                'save', False) for url_info in urls_list}
         self.redis_cli = None
         self.redis_key = None
         self.db_connection = None
@@ -57,38 +59,17 @@ class JavdbSpider(scrapy.Spider):
             host=self.crawler.settings.get('POSTGRES_HOST'),
             port=self.crawler.settings.get('POSTGRES_PORT')
         )
-        self.create_crawl_stat_table()
         self.insert_crawl_start()
-
-    def create_crawl_stat_table(self):
-        try:
-            with self.db_connection.cursor() as cursor:
-                create_table_query = """
-                CREATE TABLE IF NOT EXISTS crawl_stat (
-                    id SERIAL PRIMARY KEY,
-                    batch_id TEXT,
-                    status INTEGER DEFAULT 0,
-                    started_time TIMESTAMP,
-                    end_time TIMESTAMP,
-                    crawl_params JSONB,
-                    execute_type INTEGER DEFAULT 0
-                );
-                COMMENT ON COLUMN crawl_stat.status IS '1.成功结束，2.手动中断，0.default';
-                """
-                cursor.execute(create_table_query)
-                self.db_connection.commit()
-                logger.info("crawl_stat table created or already exists")
-        except Exception as e:
-            logger.error(f"Error creating crawl_stat table: {e}")
 
     def insert_crawl_start(self):
         try:
             with self.db_connection.cursor() as cursor:
                 insert_query = """
-                INSERT INTO crawl_stat (batch_id, started_time, crawl_params,execute_type)
-                VALUES (%s, %s, %s,%s);
+                INSERT INTO crawl_stat (batch_id,job_id, started_time, crawl_params,execute_type)
+                VALUES (%s, %s, %s,%s,%s);
                 """
-                cursor.execute(insert_query, (self.batch_id,
+                self.logger.info(self.crawl_params)
+                cursor.execute(insert_query, (self.batch_id, self.crawl_params['_job'],
                                datetime.now(), Json(self.crawl_params), self.mode))
                 self.db_connection.commit()
 
@@ -107,7 +88,7 @@ class JavdbSpider(scrapy.Spider):
             with self.db_connection.cursor() as cursor:
                 update_query = """
                 UPDATE crawl_stat
-                SET status = 1, end_time = %s
+                SET  end_time = %s
                 WHERE batch_id = %s;
                 """
                 cursor.execute(update_query, (datetime.now(), self.batch_id))
@@ -139,7 +120,7 @@ class JavdbSpider(scrapy.Spider):
             '//div[@class="item"]/a[@class="box"]/@href').getall()
         for uri in detail_urls:
             count = self.redis_cli.hget(self.redis_key, uri)
-            if count is None or int(count) <= 3:
+            if count is None or int(count) <= 300:
                 full_url = response.urljoin(uri)
                 yield scrapy.Request(url=full_url, callback=self.parse_detail, meta={'is_detail_url': True})
             else:

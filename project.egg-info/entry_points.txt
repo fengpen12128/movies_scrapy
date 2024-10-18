@@ -1,3 +1,0 @@
-[scrapy]
-settings = movies_scrapy.settings
-

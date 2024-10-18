@@ -1,5 +1,4 @@
 import scrapy
-from loguru import logger
 import os
 import requests  # 新增导入
 
@@ -38,4 +37,4 @@ class JavdbActorSpider(scrapy.Spider):
             with open(f"/root/movies_scrapy/actor_img/{filename}.jpg", 'wb') as f:
                 f.write(response.content)
         else:
-            logger.error(f"Failed to download image from {url}")
+            self.logger.error(f"Failed to download image from {url}")

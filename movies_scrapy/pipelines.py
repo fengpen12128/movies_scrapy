@@ -120,37 +120,42 @@ class PostgreSQLPipeline:
         code = item.get('code')
         save_data = dict(item)
 
-        # Check if the record already exists
-        self.cur.execute(
-            "SELECT id, created_time FROM crawl_source_data WHERE code = %s", (code,))
-        existing_record = self.cur.fetchone()
-
-        if existing_record:
-            # Update existing record
-            created_time = existing_record[1]
-            save_data['created_time'] = created_time
-            save_data['updated_time'] = datetime.now().strftime(
-                '%Y-%m-%d %H:%M:%S')
-            update_query = sql.SQL("""
-                UPDATE crawl_source_data
-                SET data = %s
-                WHERE id = %s
-            """)
+        try:
+            # Check if the record already exists
             self.cur.execute(
-                update_query, (Json(save_data), existing_record[0]))
-            spider.logger.info(f"postgresql 存在 {code}, 执行更新")
-            item['has_downloaded'] = True
-        else:
-            # Insert new record
-            insert_query = sql.SQL("""
-                INSERT INTO crawl_source_data (data)
-                VALUES (%s)
-            """)
-            save_data['created_time'] = datetime.now().strftime(
-                '%Y-%m-%d %H:%M:%S')
-            self.cur.execute(insert_query, (Json(save_data),))
+                "SELECT id, created_time FROM crawl_source_data WHERE code = %s", (code,))
+            existing_record = self.cur.fetchone()
 
-        self.conn.commit()
+            if existing_record:
+                # Update existing record
+                created_time = existing_record[1]
+                save_data['created_time'] = created_time
+                save_data['updated_time'] = datetime.now().strftime(
+                    '%Y-%m-%d %H:%M:%S')
+                update_query = sql.SQL("""
+                    UPDATE crawl_source_data
+                    SET data = %s
+                    WHERE id = %s
+                """)
+                self.cur.execute(
+                    update_query, (Json(save_data), existing_record[0]))
+                spider.logger.info(f"postgresql 存在 {code}, 执行更新")
+                item['has_downloaded'] = True
+            else:
+                # Insert new record
+                insert_query = sql.SQL("""
+                    INSERT INTO crawl_source_data (data)
+                    VALUES (%s)
+                """)
+                save_data['created_time'] = datetime.now().strftime(
+                    '%Y-%m-%d %H:%M:%S')
+                self.cur.execute(insert_query, (Json(save_data),))
+
+            self.conn.commit()
+        except psycopg2.DatabaseError as e:
+            # Rollback the transaction on error
+            self.conn.rollback()
+            spider.logger.error(f"Error processing item {code}: {e}")
         return item
 
 
