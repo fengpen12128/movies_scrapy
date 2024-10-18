@@ -10,6 +10,7 @@ import psycopg2
 from enum import Enum
 import subprocess
 import threading
+from loguru import logger
 
 
 class DownloadStatus(Enum):
@@ -52,7 +53,7 @@ class FileDownloader:
                 self.progress_tracker.update(1, 0)
                 self.stats_tracker.record_download(url, True, size)
             except Exception as e:
-                self.logger.error(
+                logger.error(
                     f"Download failed {url} to {folder}/{filename}: {e}")
                 self.progress_tracker.update(1, 0)
                 self.stats_tracker.record_download(url, False, 0)
@@ -84,11 +85,11 @@ class FileDownloader:
             }
 
             connection = psycopg2.connect(**postgres_config)
-            self.logger.info("Connected to PostgreSQL")
+            logger.info("Connected to PostgreSQL")
 
             return connection
         except psycopg2.Error as e:
-            self.logger.error(f"Failed to connect to PostgreSQL: {e}")
+            logger.error(f"Failed to connect to PostgreSQL: {e}")
             raise
 
     def start(self):
@@ -105,7 +106,7 @@ class FileDownloader:
         self.progress_tracker = DownloadProgressTracker(len(source_data))
         self.stats_tracker = DownloadStatisticsTracker(postgre_conn)
         self.total_records = len(source_data)
-        self.logger.info(
+        logger.info(
             f'Starting download task with {len(source_data)} records...')
         asyncio.run(self.start_download(source_data))
         self.status = DownloadStatus.COMPLETED
@@ -117,9 +118,9 @@ class FileDownloader:
         command = "/mc mv -r /root/download_data/ local/movies"
         try:
             subprocess.run(command, shell=True, check=True)
-            self.logger.info("Shell command executed successfully")
+            logger.info("Shell command executed successfully")
         except subprocess.CalledProcessError as e:
-            self.logger.error(f"Error executing shell command: {e}")
+            logger.error(f"Error executing shell command: {e}")
 
     def get_statistics(self) -> Dict[str, Any]:
         stats = self.stats_tracker.get_statistics()
