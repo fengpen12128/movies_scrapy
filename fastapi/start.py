@@ -14,9 +14,9 @@ def main():
         run_command("docker stop movies_scrapy_fastapi")
         run_command("docker rm movies_scrapy_fastapi")
 
-    # 运行新的容器
+    # 运行新的容器，并挂载/root/download_data/
     run_command(
-        "docker run -d --name movies_scrapy_fastapi --network host movies_scrapy_fastapi")
+        "docker run -d --name movies_scrapy_fastapi --network host -v /root/download_data:/root/download_data movies_scrapy_fastapi")
 
 
 if __name__ == "__main__":
