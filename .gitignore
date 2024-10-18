@@ -6,3 +6,4 @@ eggs/
 items/
 build/
 setup.py
+project.egg-info/
