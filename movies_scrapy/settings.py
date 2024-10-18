@@ -30,7 +30,7 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 10.0
 DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,
-    "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
+    #"movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
 
 }
 
@@ -39,7 +39,7 @@ ITEM_PIPELINES = {
     # "movies_scrapy.pipelines.MongoPipeline": 1,
     #  "movies_scrapy.pipelines.CustomImageVideoPipeline": 2,
     "movies_scrapy.pipelines.PostgreSQLPipeline": 3,
-    "movies_scrapy.pipelines.DownloadURLsPipeline": 4,
+    # "movies_scrapy.pipelines.DownloadURLsPipeline": 4,
 }
 
 
@@ -79,7 +79,7 @@ DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 POSTGRES_DB = 'postgres'
 POSTGRES_USER = 'postgres'
 POSTGRES_PASSWORD = 'admin123'
-POSTGRES_HOST = '192.168.1.22'
+POSTGRES_HOST = '127.0.0.1'
 POSTGRES_PORT = '5432'
 
 

@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 
 # 安装 Scrapyd 和其他可能需要的依赖
 RUN pip install --no-cache-dir scrapyd scrapy
-VOLUME scrapyd-data /var/lib/scrapyd/
+VOLUME scrapyd-data /app/logs
 
 VOLUME ["/scrapyd/logs"]
 
