@@ -28,3 +28,6 @@ CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
 
 # 声明卷，将/root/download_data/挂载出去
 VOLUME ["/root/download_data/"]
+
+# 挂载宿主机的/mc命令
+VOLUME ["/mc"]
