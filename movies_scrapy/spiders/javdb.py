@@ -130,4 +130,19 @@ class JavdbSpider(scrapy.Spider):
         uri = os.path.basename(response.url)
         item = javdb_parser(response.text, f'/v/{uri}')
         item['batch_id'] = self.batch_id
-        yield item
+
+        # Check if release_date exists and is valids
+        if 'release_date' in item and item['release_date']:
+            try:
+                release_date = datetime.strptime(item['release_date'], '%Y-%m-%d')
+                if release_date < datetime(2004, 1, 1):
+                    self.logger.info(f"Skipping item {item['code']}-{item['release_date']}: {uri}")
+                    return  # Skip the item
+                else:
+                    yield item
+            except ValueError:
+                self.logger.warning(f"Invalid release date format for {uri}: {item['release_date']}")
+                return  # Skip the item if the date format is invalid
+        else:
+            self.logger.warning(f"No release date found for {uri}")
+            return  # Skip the item if no release date is found

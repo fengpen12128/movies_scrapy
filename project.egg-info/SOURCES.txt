@@ -6,6 +6,7 @@ fastapi/file_download.py
 fastapi/main.py
 fastapi/start.py
 movies_scrapy/__init__.py
+movies_scrapy/actor_profile_parser.py
 movies_scrapy/config.py
 movies_scrapy/items.py
 movies_scrapy/javdbparse_sp.py
@@ -16,6 +17,7 @@ movies_scrapy/settings.py
 movies_scrapy/spiders/__init__.py
 movies_scrapy/spiders/javdb.py
 movies_scrapy/spiders/javdb_actor.py
+movies_scrapy/spiders/javdb_actor_profile.py
 project.egg-info/PKG-INFO
 project.egg-info/SOURCES.txt
 project.egg-info/dependency_links.txt

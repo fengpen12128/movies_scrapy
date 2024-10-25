@@ -139,7 +139,7 @@ class PostgreSQLPipeline:
                 """)
                 self.cur.execute(
                     update_query, (Json(save_data), existing_record[0]))
-                spider.logger.info(f"postgresql 存在 {code}, 执行更新")
+                spider.logger.info(f"Record with code {code} exists in PostgreSQL, updating.....")
                 item['has_downloaded'] = True
             else:
                 # Insert new record
