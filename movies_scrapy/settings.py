@@ -85,7 +85,7 @@ POSTGRES_PORT = '5432'
 MINIO_ENDPOINT = '127.0.0.1:9000'
 MINIO_ACCESS_KEY = 'admin'
 MINIO_SECRET_KEY = 'admin123'
-MINIO_BUCKET = 'movies_html'
+MINIO_BUCKET = 'movies-html'
 MINIO_SECURE = False
 
 
