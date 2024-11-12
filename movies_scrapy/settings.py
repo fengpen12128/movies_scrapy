@@ -31,7 +31,7 @@ DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,
     # "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
-    "movies_scrapy.middlewares.MinioMiddleware": 400,
+    "movies_scrapy.middlewares.MinioUploadMiddleware": 400,
 }
 
 
