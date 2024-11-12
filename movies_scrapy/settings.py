@@ -30,7 +30,8 @@ AUTOTHROTTLE_TARGET_CONCURRENCY = 10.0
 DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,
-    "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
+    # "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
+    "movies_scrapy.middlewares.MinioMiddleware": 400,
 }
 
 
@@ -80,6 +81,12 @@ POSTGRES_USER = 'postgres'
 POSTGRES_PASSWORD = 'admin123'
 POSTGRES_HOST = '127.0.0.1'
 POSTGRES_PORT = '5432'
+
+MINIO_ENDPOINT = '127.0.0.1:9000'
+MINIO_ACCESS_KEY = 'admin'
+MINIO_SECRET_KEY = 'admin123'
+MINIO_BUCKET = 'movies_html'
+MINIO_SECURE = False
 
 
 # 将项目根目录添加到 Python 路径
