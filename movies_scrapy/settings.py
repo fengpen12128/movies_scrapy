@@ -31,7 +31,6 @@ DOWNLOADER_MIDDLEWARES = {
     "movies_scrapy.middlewares.RandomUserAgentMiddleware": 100,
     "movies_scrapy.middlewares.RequestLoggingMiddleware": 200,
     "movies_scrapy.middlewares.SaveHtmlMiddleware": 300,
-
 }
 
 
@@ -79,7 +78,7 @@ DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 POSTGRES_DB = 'postgres'
 POSTGRES_USER = 'postgres'
 POSTGRES_PASSWORD = 'admin123'
-POSTGRES_HOST = '192.168.1.22'
+POSTGRES_HOST = '127.0.0.1'
 POSTGRES_PORT = '5432'
 
 

@@ -120,7 +120,7 @@ class JavdbSpider(scrapy.Spider):
             '//div[@class="item"]/a[@class="box"]/@href').getall()
         for uri in detail_urls:
             count = self.redis_cli.hget(self.redis_key, uri)
-            if count is None or int(count) <= 300:
+            if count is None or int(count) <= 30:
                 full_url = response.urljoin(uri)
                 yield scrapy.Request(url=full_url, callback=self.parse_detail, meta={'is_detail_url': True})
             else:
@@ -134,14 +134,17 @@ class JavdbSpider(scrapy.Spider):
         # Check if release_date exists and is valids
         if 'release_date' in item and item['release_date']:
             try:
-                release_date = datetime.strptime(item['release_date'], '%Y-%m-%d')
-                if release_date < datetime(2004, 1, 1):
-                    self.logger.info(f"Skipping item {item['code']}-{item['release_date']}: {uri}")
+                release_date = datetime.strptime(
+                    item['release_date'], '%Y-%m-%d')
+                if release_date < datetime(2014, 1, 1):
+                    self.logger.info(
+                        f"Skipping item {item['code']} ==>  {item['release_date']}")
                     return  # Skip the item
                 else:
                     yield item
             except ValueError:
-                self.logger.warning(f"Invalid release date format for {uri}: {item['release_date']}")
+                self.logger.warning(
+                    f"Invalid release date format for {uri}: {item['release_date']}")
                 return  # Skip the item if the date format is invalid
         else:
             self.logger.warning(f"No release date found for {uri}")
