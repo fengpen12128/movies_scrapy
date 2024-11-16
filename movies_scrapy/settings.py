@@ -76,7 +76,7 @@ HTML_STORE = '/root/saved_html'
 DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 
 # PostgreSQL settings
-POSTGRES_DB = 'moviesApp'
+POSTGRES_DB = 'moviesApp_test'
 POSTGRES_USER = 'admin'
 POSTGRES_PASSWORD = 'admin123'
 POSTGRES_HOST = '127.0.0.1'
