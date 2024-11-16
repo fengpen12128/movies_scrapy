@@ -46,8 +46,8 @@ async def api_run_spider(request: SpiderRequest):
         spider_name = 'javdb'
         project_name = 'movies_scrapy'
 
-        # 生成 batch_id
-        batch_id = int(time.time())
+
+        batch_num = int(time.time())
 
         # 将 URLs 列表转换为 JSON 字符串
         urls_json = json.dumps(request.urls)
@@ -59,14 +59,13 @@ async def api_run_spider(request: SpiderRequest):
             spider_name,
             urls=urls_json,
             mode='temp',
-            batch_id=batch_id
+            batch_num=batch_num
         )
         logger.info(f"Scheduled task with ID: {task_id}")
 
-        # 返回任务 ID 和 batch_id
         return {
             "jobId": task_id,
-            "batchId": str(batch_id)
+            "batchNum": str(batch_num)
         }
     except Exception as e:
         logger.error(f"Error occurred: {str(e)}")

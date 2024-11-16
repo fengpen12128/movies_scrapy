@@ -18,7 +18,7 @@ class JavdbSpider(scrapy.Spider):
     def __init__(self, *args, **kwargs):
         super(JavdbSpider, self).__init__(*args, **kwargs)
         self.mode = kwargs.get('mode', 'scheduled')
-        self.batch_id = kwargs.get('batch_id', str(int(time.time())))
+        self.batch_num = kwargs.get('batch_num', str(int(time.time())))
         self.crawl_params = kwargs
         self.logger.info(kwargs)  # Store all parameters
         if self.mode == 'temp':
@@ -65,16 +65,16 @@ class JavdbSpider(scrapy.Spider):
         try:
             with self.db_connection.cursor() as cursor:
                 insert_query = """
-                INSERT INTO crawl_stat (batch_id,job_id, started_time, crawl_params,execute_type)
+                INSERT INTO crawl_stat (batch_num,job_id, started_time, crawl_params,execute_type)
                 VALUES (%s, %s, %s,%s,%s);
                 """
                 self.logger.info(self.crawl_params)
-                cursor.execute(insert_query, (self.batch_id, self.crawl_params['_job'],
+                cursor.execute(insert_query, (self.batch_num, self.crawl_params['_job'],
                                datetime.now(), Json(self.crawl_params), self.mode))
                 self.db_connection.commit()
 
                 self.logger.info(
-                    f"Crawl start recorded for batch_id: {self.batch_id}")
+                    f"Crawl start recorded for batch_num: {self.batch_num}")
         except Exception as e:
             self.logger.error(f"Error inserting crawl start data: {e}")
 
@@ -89,12 +89,12 @@ class JavdbSpider(scrapy.Spider):
                 update_query = """
                 UPDATE crawl_stat
                 SET  end_time = %s
-                WHERE batch_id = %s;
+                WHERE batch_num = %s;
                 """
-                cursor.execute(update_query, (datetime.now(), self.batch_id))
+                cursor.execute(update_query, (datetime.now(), self.batch_num))
                 self.db_connection.commit()
                 self.logger.info(
-                    f"Crawl end recorded for batch_id: {self.batch_id}")
+                    f"Crawl end recorded for batch_num: {self.batch_num}")
         except Exception as e:
             self.logger.error(f"Error updating crawl end data: {e}")
         finally:
@@ -102,7 +102,7 @@ class JavdbSpider(scrapy.Spider):
                 self.db_connection.close()
 
     def start_requests(self):
-        self.logger.info(f'batch_id: {self.batch_id}')
+        self.logger.info(f'batch_num: {self.batch_num}')
         self.logger.info(f'Crawling mode: {self.mode}')
 
         if self.mode == 'temp':
@@ -129,7 +129,7 @@ class JavdbSpider(scrapy.Spider):
     def parse_detail(self, response):
         uri = os.path.basename(response.url)
         item = javdb_parser(response.text, f'/v/{uri}')
-        item['batch_id'] = self.batch_id
+        item['batch_num'] = self.batch_num
 
         # Check if release_date exists and is valids
         if 'release_date' in item and item['release_date']:

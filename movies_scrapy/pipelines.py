@@ -189,17 +189,17 @@ class DownloadURLsPipeline:
         if not item.get('code') or item.get('has_downloaded', False):
             return item
 
-        batch_id = item.get('batch_id')
+        batch_num = item.get('batch_num')
         code = item.get('code')
         media_urls = item.get('media_urls', [])
 
         insert_query = sql.SQL("""
-            INSERT INTO download_urls (batch_id, url, code, type)
+            INSERT INTO download_urls (batch_num, url, code, type)
             VALUES %s
         """)
 
         values = [
-            (batch_id, media_url.get('url'), code, int(media_url.get('type')))
+            (batch_num, media_url.get('url'), code, int(media_url.get('type')))
             for media_url in media_urls
         ]
 
