@@ -76,8 +76,8 @@ HTML_STORE = '/root/saved_html'
 DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 
 # PostgreSQL settings
-POSTGRES_DB = 'postgres'
-POSTGRES_USER = 'postgres'
+POSTGRES_DB = 'moviesApp'
+POSTGRES_USER = 'admin'
 POSTGRES_PASSWORD = 'admin123'
 POSTGRES_HOST = '127.0.0.1'
 POSTGRES_PORT = '5432'
@@ -85,7 +85,7 @@ POSTGRES_PORT = '5432'
 MINIO_ENDPOINT = '127.0.0.1:9000'
 MINIO_ACCESS_KEY = 'admin'
 MINIO_SECRET_KEY = 'admin123'
-MINIO_BUCKET = 'movies-html'
+MINIO_BUCKET = 'test'
 MINIO_SECURE = False
 
 
