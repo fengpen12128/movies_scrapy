@@ -48,15 +48,12 @@ TWISTED_REACTOR = "twisted.internet.asyncioreactor.AsyncioSelectorReactor"
 FEED_EXPORT_ENCODING = "utf-8"
 
 # Redis configuration
-REDIS_HOST = '127.0.0.1'
+REDIS_HOST = '192.168.31.19'
 REDIS_PORT = 6379
 REDIS_DB = 8
 REDIS_KEY = 'javdb:scheduled_scrapyed_url'
 
-# MongoDB settings
-MONGO_URI = 'mongodb://127.0.0.1:27017'
-MONGO_DATABASE = 'py_crawal'
-MONGO_COLLECTION = 'movies_default'
+
 
 SCRAPEOPS_API_KEY = 'a925fde0-def1-4452-90e1-4992687830d0'
 USER_AGENT_ENDPOINT = 'https://headers.scrapeops.io/v1/browser-headers'
@@ -75,7 +72,7 @@ DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 POSTGRES_DB = 'moviesApp'
 POSTGRES_USER = 'admin'
 POSTGRES_PASSWORD = 'admin123'
-POSTGRES_HOST = 'postgres'
+POSTGRES_HOST = '192.168.31.19'
 POSTGRES_PORT = '5432'
 
 
