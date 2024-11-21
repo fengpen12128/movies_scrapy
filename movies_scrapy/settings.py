@@ -78,7 +78,8 @@ POSTGRES_PASSWORD = 'admin123'
 POSTGRES_HOST = 'postgres'
 POSTGRES_PORT = '5432'
 
-MINIO_ENDPOINT = 'minio:9000'
+
+MINIO_ENDPOINT = 'minio_movies:9000'
 MINIO_ACCESS_KEY = 'admin'
 MINIO_SECRET_KEY = 'admin123'
 MINIO_BUCKET = 'movies-html'
