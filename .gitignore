@@ -7,3 +7,4 @@ items/
 build/
 setup.py
 project.egg-info/
+.DS_Store

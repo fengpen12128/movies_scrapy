@@ -14,8 +14,8 @@ cookies = {
 
 base_urls = {
     'makers': [
-        'zK', 'Y46', '6M', 'ZXX', 'rmZ', 'bgA', '35e', 'Ywz', '333', 'Ww7',
-        'p3k', '8Xd', 'Aby', 'J2x', '89V', '5458', 'kBvm', 'M6A', '725b'
+        'Y46', '6M', 'ZXX', 'rmZ', 'bgA', '35e', 'Ywz', '333', 'Ww7',
+        'p3k', '8Xd', 'Aby', '89V', '5458', 'kBvm', 'M6A', '725b'
     ],
     'series': ['ynPA'],
     'video_codes': [

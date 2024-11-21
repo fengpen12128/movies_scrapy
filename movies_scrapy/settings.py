@@ -69,23 +69,19 @@ SCRAPYAPI_KEY = '6a43fd4b7c5e2e043f2d0f1960768f39'
 LOG_LEVEL = 'INFO'
 
 
-FILES_STORE = '/root/download_data'
-IMAGES_STORE = '/root/download_data'
-HTML_STORE = '/root/saved_html'
-
 DOWNLOAD_WARN_SIZE = 300 * 1024 * 1024  # 设置为100MB
 
 # PostgreSQL settings
-POSTGRES_DB = 'moviesApp_test'
+POSTGRES_DB = 'moviesApp'
 POSTGRES_USER = 'admin'
 POSTGRES_PASSWORD = 'admin123'
-POSTGRES_HOST = '127.0.0.1'
+POSTGRES_HOST = 'postgres'
 POSTGRES_PORT = '5432'
 
-MINIO_ENDPOINT = '127.0.0.1:9000'
+MINIO_ENDPOINT = 'minio:9000'
 MINIO_ACCESS_KEY = 'admin'
 MINIO_SECRET_KEY = 'admin123'
-MINIO_BUCKET = 'test'
+MINIO_BUCKET = 'movies-html'
 MINIO_SECURE = False
 
 
